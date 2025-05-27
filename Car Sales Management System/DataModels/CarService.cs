@@ -31,8 +31,6 @@ namespace Car_Sales_Management_System.DataModels
         }
     }
 
-
-
     //    public void AddCar(Car car) =>  
     //        _cars.InsertOne(car);  
 
