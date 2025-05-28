@@ -100,7 +100,7 @@
                 <DatePicker x:Name="ListedDatePicker" Grid.Column="1" SelectedDate="{x:Static sys:DateTime.Now}"/>
             </Grid>
 
-            <Button Content="Add Car" Width="100" HorizontalAlignment="Right" Padding="6" Background="#007ACC" Foreground="White" BorderThickness="0" Cursor="Hand" Click="AddCarButton_Click"/>
-        </StackPanel>
+            <Button Content="Add Car" Width="100" HorizontalAlignment="Right" Padding="6" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" /> <!--Click="AddCarButton_Click"/>-->
+        </StackPanel> 
     </Border>
 </UserControl>

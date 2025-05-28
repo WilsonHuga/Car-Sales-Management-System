@@ -11,7 +11,7 @@
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Background" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -45,11 +45,11 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#E0E0E0"/>
+                                <Setter TargetName="Border" Property="Background" Value="White"/>
                             </Trigger>
                             <Trigger Property="IsSubmenuOpen" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#007ACC"/>
-                                <Setter Property="Foreground" Value="White"/>
+                                <Setter TargetName="Border" Property="Background" Value="lightGray"/>
+                                <Setter Property="Foreground" Value="Black"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -101,10 +101,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        
         <!-- Application Title Style -->
         <Style x:Key="AppTitleStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="#000046"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -140,24 +140,26 @@
         </Border>
 
         <!-- Menu Items -->
-        <Menu Grid.Column="1" Background="Transparent" VerticalAlignment="Center" Height="30">
-            <MenuItem Header="File" Style="{StaticResource MenuItemStyle}">
-                <MenuItem Header="New Inventory" Command="{Binding NewInventoryCommand}"/>
+        <Menu Grid.Column="1" Background="Transparent" VerticalAlignment="Center" Height="30" >
+            <MenuItem Header="File" Style="{StaticResource MenuItemStyle}" Margin="0 0 10 0">
+                <MenuItem Header="New Car" Command="{Binding NewCarCommand}"/>
                 <MenuItem Header="Open Database..." Command="{Binding OpenDatabaseCommand}"/>
                 <Separator/>
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
             </MenuItem>
-            <MenuItem Header="Inventory" Style="{StaticResource MenuItemStyle}">
+            <MenuItem Header="Edit" Style="{StaticResource MenuItemStyle}">
                 <MenuItem Header="Add New Car" Command="{Binding AddNewCarCommand}"/>
-                <MenuItem Header="Update Pricing" Command="{Binding UpdatePricingCommand}"/>
+                <MenuItem Header="Update Car" Command="{Binding UpdateCarCommand}"/>
+                <MenuItem Header="Delete Car" Command="{Binding DeleteCarCommand}"/>
+                <MenuItem Header="Show All Car" Command="{Binding ShowAllCarsCommand}"/>
             </MenuItem>
-            <MenuItem Header="Help" Style="{StaticResource MenuItemStyle}">
+            <MenuItem Header="Help" Style="{StaticResource MenuItemStyle}" Margin="10 0 0 0">>
                 <MenuItem Header="User Manual" Command="{Binding UserManualCommand}"/>
                 <MenuItem Header="Contact Support" Command="{Binding ContactSupportCommand}"/>
             </MenuItem>
         </Menu>
 
-        <!-- Search Box -->
+        <!-- Search Box 
         <Grid Grid.Column="2" VerticalAlignment="Center" Margin="10,0" Height="28">
             <TextBox x:Name="SearchTextBox"
                      Style="{StaticResource SearchBoxStyle}"
@@ -174,7 +176,7 @@
                       Data="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 13 13.77l.27.28v.79l5 4.99L17.49 20l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"
                       Stretch="Uniform"/>
             </Button>
-        </Grid>
+        </Grid> -->
 
         <!-- Application Title -->
         <TextBlock Grid.Column="3" 

@@ -89,5 +89,8 @@
                 <DataGridTextColumn Header="Listed Date" Binding="{Binding ListedDate, StringFormat=d}" Width="120"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <!--<usercontrols:CarFilter Grid.Row="2"/> -->
+
     </Grid>
 </Window>
