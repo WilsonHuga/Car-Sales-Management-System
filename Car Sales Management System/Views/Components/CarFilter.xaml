@@ -16,89 +16,37 @@
             <!-- Filter Options -->
             <WrapPanel HorizontalAlignment="Left" ItemHeight="60" ItemWidth="220" Margin="0,0,0,10">
                 <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Car Make"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Make"/>
+                    <TextBlock Text="Car Make" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="MakeComboBox" Width="200"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Car Model"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Model"/>
+                    <TextBlock Text="Car Model" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="ModelComboBox" Width="200"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Body Type"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Body Type"/>
+                    <TextBlock Text="Color" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="ColorComboBox" Width="200"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Fuel Type"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Fuel Type"/>
+                    <TextBlock Text="Price Range" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="PriceRangeComboBox" Width="200"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Transmission"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Transmission"/>
+                    <TextBlock Text="Year" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="YearComboBox" Width="200"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Color"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Color"/>
+                    <TextBlock Text="Mileage" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="MileageComboBox" Width="200"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Price Range"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Price Range"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Year"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Year"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Mileage"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Mileage"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Width="200" Margin="5">
-                    <TextBlock Text="Condition"
-                               FontSize="12"
-                               Foreground="#333333"
-                               Margin="0,0,0,5"/>
-                    <ComboBox Width="200" Text="Condition"/>
+                    <TextBlock Text="Condition" FontSize="12" Foreground="#333333" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="ConditionComboBox" Width="200"/>
                 </StackPanel>
             </WrapPanel>
 
             <!-- Keyword Search -->
-            <TextBox x:Name="KeywordBox"
-                     Width="420"
-                     Height="32"
-                     Padding="8,4"
-                     FontSize="13"
-                     Text="Keyword..."
-                     Foreground="Gray"
-                     BorderBrush="#CCCCCC"
-                     BorderThickness="1"
-                     Background="#FFFFFF"
-                     Margin="5,0,0,10"/>
+            <TextBox x:Name="SearchTextBox" Width="400" Height="32" Padding="8,4" VerticalAlignment="Center" Margin="0,0,10,0" TextChanged="SearchTextBox_TextChanged"/>
 
             <!-- Submit Button -->
             <Button Content="View Listings"

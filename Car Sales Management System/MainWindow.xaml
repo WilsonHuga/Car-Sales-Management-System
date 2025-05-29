@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:usercontrols="clr-namespace:Car_Sales_Management_System.Views.Components"
-        Title="AutoMart - Car Sales" Height="600" Width="1000"
+        Title="AutoMart - Car Sales" Height="800" Width="1200"
         WindowStartupLocation="CenterScreen"
         Background="#FAFAFA">
 
@@ -12,6 +12,8 @@
             <!-- Header -->
             <RowDefinition Height="Auto"/>
             <!-- Toolbar -->
+            <RowDefinition Height="Auto"/>
+            
             <RowDefinition Height="*"/>
             <!-- Content -->
         </Grid.RowDefinitions>
@@ -20,30 +22,31 @@
         
         <!-- Toolbar -->
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10" HorizontalAlignment="Right" >
-            <TextBox x:Name="SearchTextBox" Width="200" Height="30" VerticalAlignment="Center" Margin="0,0,10,0" TextChanged="SearchTextBox_TextChanged"/>
             <Button Content="Add Car" Width="100" Margin="0,0,10,0"/>
             <Button Content="Edit" Width="80" Margin="0,0,10,0"/>
             <Button Content="Delete" Width="80"/>
         </StackPanel>
 
+        <usercontrols:CarFilter x:Name="CarFilterControl" Grid.Row="2"/>
+
         <!-- Car DataGrid -->
         <DataGrid x:Name="CarGrid" 
-                  Grid.Row="2"
-                  AutoGenerateColumns="False"
-                  Margin="10"
-                  Background="#F5F5F5"
-                  BorderBrush="#D3D3D3"
-                  BorderThickness="1"
-                  RowHeight="40"
-                  GridLinesVisibility="Horizontal"
-                  AlternatingRowBackground="#F0F0F0"
-                  CanUserAddRows="False"
-                  CanUserSortColumns="True"
-                  IsReadOnly="True"
-                  SelectionMode="Single"
-                  SelectionUnit="FullRow"
-                  HeadersVisibility="Column">
-            
+          Grid.Row="3"
+          AutoGenerateColumns="False"
+          Margin="10"
+          Background="#F5F5F5"
+          BorderBrush="#D3D3D3"
+          BorderThickness="1"
+          RowHeight="40"
+          GridLinesVisibility="Horizontal"
+          AlternatingRowBackground="#F0F0F0"
+          CanUserAddRows="False"
+          CanUserSortColumns="True"
+          IsReadOnly="True"
+          SelectionMode="Single"
+          SelectionUnit="FullRow"
+          HeadersVisibility="Column">
+
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Background" Value="#E0E0E0"/>
@@ -76,7 +79,7 @@
                     </Style.Triggers>
                 </Style>
             </DataGrid.Resources>
-            
+
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Make" Binding="{Binding Make}" Width="120"/>
                 <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="120"/>
@@ -90,7 +93,6 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!--<usercontrols:CarFilter Grid.Row="2"/> -->
 
     </Grid>
 </Window>
