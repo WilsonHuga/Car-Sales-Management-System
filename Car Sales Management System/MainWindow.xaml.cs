@@ -1,20 +1,54 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using Car_Sales_Management_System.DataModels;
+using System.Windows.Input;
 
-using Car_Sales_Management_System.Views.Components; // Ensure this namespace is correct
+using Car_Sales_Management_System.DataModels;
+using Car_Sales_Management_System.Views;
+using Car_Sales_Management_System.Views.Components; // Adjust namespace as needed
 
 namespace Car_Sales_Management_System
 {
+    // Simple RelayCommand<T> implementation for command binding
+    public class RelayCommand<T> : ICommand
+    {
+        private readonly Action<T> _execute;
+        private readonly Predicate<T>? _canExecute;
+
+        public RelayCommand(Action<T> execute, Predicate<T>? canExecute = null)
+        {
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object? parameter)
+        {
+            return _canExecute == null || (parameter is T t && _canExecute(t));
+        }
+
+        public void Execute(object? parameter)
+        {
+            if (parameter is T t)
+                _execute(t);
+        }
+
+        public event EventHandler? CanExecuteChanged
+        {
+            add => CommandManager.RequerySuggested += value!;
+            remove => CommandManager.RequerySuggested -= value!;
+        }
+    }
+
     public partial class MainWindow : Window
     {
         private CarService? _carService;
         public ObservableCollection<Car> Cars { get; set; }
         private List<Car> _allCars = new List<Car>();
 
+        public ICommand RequestViewingCommand { get; }
+        public ICommand GeneralEnquiryCommand { get; }
 
         public MainWindow()
         {
@@ -23,11 +57,14 @@ namespace Car_Sales_Management_System
             Cars = new ObservableCollection<Car>();
             DataContext = this; // Set DataContext for binding
 
+            // Initialize commands
+            RequestViewingCommand = new RelayCommand<Car>(RequestViewing);
+            GeneralEnquiryCommand = new RelayCommand<Car>(GeneralEnquiry);
+
             CarGrid.ItemsSource = Cars; // Bind the DataGrid to the Cars collection
             CarFilterControl.FilterChanged += ApplyFilters;
 
             LoadCars();
-
         }
 
         private void LoadCars()
@@ -38,12 +75,11 @@ namespace Car_Sales_Management_System
 
                 _allCars = cars; // Save for filtering
 
+                Cars.Clear();
                 foreach (var car in cars)
                 {
                     Cars.Add(car);
                 }
-
-                //CarGrid.ItemsSource = Cars;
 
                 CarFilterControl.LoadFilterOptions(cars);
 
@@ -108,26 +144,42 @@ namespace Car_Sales_Management_System
                 Cars.Add(car);
         }
 
+        private void ToggleViewButton_Checked(object sender, RoutedEventArgs e)
+        {
+            CarGrid.Visibility = Visibility.Collapsed;
+            CardViewScrollViewer.Visibility = Visibility.Visible;
+            ToggleViewButton.Content = "Table View";
+        }
 
-        //private void FilterCars(string query)
-        //{
-        //    if (_allCars == null || Cars == null) return;
+        private void ToggleViewButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CarGrid.Visibility = Visibility.Visible;
+            CardViewScrollViewer.Visibility = Visibility.Collapsed;
+            ToggleViewButton.Content = "Card View";
+        }
 
-        //    var filtered = string.IsNullOrWhiteSpace(query)
-        //        ? _allCars
-        //        : _allCars.Where(car =>
-        //            (!string.IsNullOrEmpty(car.Make) && car.Make.ToLower().Contains(query)) ||
-        //            (!string.IsNullOrEmpty(car.Model) && car.Model.ToLower().Contains(query)) ||
-        //            (!string.IsNullOrEmpty(car.Color) && car.Color.ToLower().Contains(query)) ||
-        //            (!string.IsNullOrEmpty(car.VIN) && car.VIN.ToLower().Contains(query)) ||
-        //            (!string.IsNullOrEmpty(car.Condition) && car.Condition.ToLower().Contains(query))
-        //        ).ToList();
+        private void RequestViewing(Car car)
+        {
+            MessageBox.Show($"Viewing request for {car.Make} {car.Model} submitted!");
+        }
 
-        //    Cars.Clear();
-        //    foreach (var car in filtered)
-        //        Cars.Add(car);
-        //}
+        private void GeneralEnquiry(Car car)
+        {
+            MessageBox.Show($"General enquiry for {car.Make} {car.Model} submitted!");
+        }
 
+        private void AddCarButton_Click(object sender, RoutedEventArgs e)
+        {
+            var addCarWindow = new AddCarWindow();
+            addCarWindow.Owner = this;  // Set owner to center modal properly
+            var result = addCarWindow.ShowDialog();
 
+            if (result == true)
+            {
+                // Refresh your car list here
+                LoadCars();
+            }
+
+        }
     }
 }

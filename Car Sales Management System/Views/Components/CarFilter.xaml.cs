@@ -20,11 +20,7 @@ namespace Car_Sales_Management_System.Views.Components
     public partial class CarFilter : UserControl
     {
         public event Action<string>? SearchTextChanged;
-
         public event Action<CarFilterCriteria>? FilterChanged;
-
-
-
         public ObservableCollection<Car> Cars { get; set; }
         private List<Car> _allCars = new List<Car>();
 
@@ -32,8 +28,9 @@ namespace Car_Sales_Management_System.Views.Components
         {
             InitializeComponent();
 
-            MakeComboBox.SelectionChanged += OnFilterChanged;
+            MakeComboBox.SelectionChanged += OnMakeChanged;
             ModelComboBox.SelectionChanged += OnFilterChanged;
+
             ColorComboBox.SelectionChanged += OnFilterChanged;
             ConditionComboBox.SelectionChanged += OnFilterChanged;
             YearComboBox.SelectionChanged += OnFilterChanged;
@@ -46,8 +43,22 @@ namespace Car_Sales_Management_System.Views.Components
         {
             _allCars = cars;
 
-            MakeComboBox.ItemsSource = cars.Select(c => c.Make).Where(m => !string.IsNullOrWhiteSpace(m)).Distinct().OrderBy(m => m).ToList();
-            ModelComboBox.ItemsSource = cars.Select(c => c.Model).Where(m => !string.IsNullOrWhiteSpace(m)).Distinct().OrderBy(m => m).ToList();
+            MakeComboBox.ItemsSource = _allCars
+               .Select(c => c.Make)
+               .Where(m => !string.IsNullOrWhiteSpace(m))
+               .Distinct()
+               .OrderBy(m => m)
+               .ToList();
+
+            // Initially show all models
+            ModelComboBox.ItemsSource = _allCars
+                .Select(c => c.Model)
+                .Where(m => !string.IsNullOrWhiteSpace(m))
+                .Distinct()
+                .OrderBy(m => m)
+                .ToList();
+
+
             ColorComboBox.ItemsSource = cars.Select(c => c.Color).Where(m => !string.IsNullOrWhiteSpace(m)).Distinct().OrderBy(m => m).ToList();
             ConditionComboBox.ItemsSource = cars.Select(c => c.Condition).Where(m => !string.IsNullOrWhiteSpace(m)).Distinct().OrderBy(m => m).ToList();
             YearComboBox.ItemsSource = cars.Select(c => c.Year.ToString()).Distinct().OrderByDescending(y => y).ToList();
@@ -75,6 +86,25 @@ namespace Car_Sales_Management_System.Views.Components
 
             FilterChanged?.Invoke(criteria);
         }
+
+        private void OnMakeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string selectedMake = MakeComboBox.SelectedItem as string ?? "";
+
+            var filteredModels = _allCars
+                .Where(c => string.IsNullOrWhiteSpace(selectedMake) || c.Make == selectedMake)
+                .Select(c => c.Model)
+                .Where(m => !string.IsNullOrWhiteSpace(m))
+                .Distinct()
+                .OrderBy(m => m)
+                .ToList();
+
+            ModelComboBox.ItemsSource = filteredModels;
+            ModelComboBox.SelectedItem = null; // Clear selection to avoid stale value
+
+            OnFilterChanged(sender, e);
+        }
+
         public class CarFilterCriteria
         {
             public string? Make { get; set; }
@@ -92,10 +122,27 @@ namespace Car_Sales_Management_System.Views.Components
             OnFilterChanged(sender, e);
         }
 
-        //private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    string query = SearchTextBox.Text?.Trim().ToLower() ?? "";
-        //    SearchTextChanged?.Invoke(query);
-        //}
+        private void ClearFilter_Click(object sender, RoutedEventArgs e)
+        {
+            MakeComboBox.SelectedItem = null;
+            ModelComboBox.SelectedItem = null;
+            ColorComboBox.SelectedItem = null;
+            ConditionComboBox.SelectedItem = null;
+            YearComboBox.SelectedItem = null;
+            MileageComboBox.SelectedItem = null;
+            PriceRangeComboBox.SelectedItem = null;
+            SearchTextBox.Text = string.Empty;
+
+            // Reload all models (since Make is cleared)
+            ModelComboBox.ItemsSource = _allCars
+                .Select(c => c.Model)
+                .Where(m => !string.IsNullOrWhiteSpace(m))
+                .Distinct()
+                .OrderBy(m => m)
+                .ToList();
+
+            // Trigger the filter event with empty criteria
+            OnFilterChanged(sender, e);
+        }
     }
 }

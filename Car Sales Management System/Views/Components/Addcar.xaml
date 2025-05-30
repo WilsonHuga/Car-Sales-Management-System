@@ -17,8 +17,52 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Make:" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 5 0"/>
-                <TextBox x:Name="MakeTextBox" Grid.Column="1" MinWidth="200"/>
+                <ComboBox x:Name="MakeComboBox" Grid.Column="1" IsEditable="True">
+                    <ComboBoxItem Content="Acura"/>
+                    <ComboBoxItem Content="Alfa Romeo"/>
+                    <ComboBoxItem Content="Audi"/>
+                    <ComboBoxItem Content="BMW"/>
+                    <ComboBoxItem Content="Buick"/>
+                    <ComboBoxItem Content="Cadillac"/>
+                    <ComboBoxItem Content="Chevrolet"/>
+                    <ComboBoxItem Content="Chrysler"/>
+                    <ComboBoxItem Content="Citroën"/>
+                    <ComboBoxItem Content="Dodge"/>
+                    <ComboBoxItem Content="Ferrari"/>
+                    <ComboBoxItem Content="Fiat"/>
+                    <ComboBoxItem Content="Ford"/>
+                    <ComboBoxItem Content="Genesis"/>
+                    <ComboBoxItem Content="GMC"/>
+                    <ComboBoxItem Content="Honda"/>
+                    <ComboBoxItem Content="Hyundai"/>
+                    <ComboBoxItem Content="Infiniti"/>
+                    <ComboBoxItem Content="Jaguar"/>
+                    <ComboBoxItem Content="Jeep"/>
+                    <ComboBoxItem Content="Kia"/>
+                    <ComboBoxItem Content="Lamborghini"/>
+                    <ComboBoxItem Content="Land Rover"/>
+                    <ComboBoxItem Content="Lexus"/>
+                    <ComboBoxItem Content="Lincoln"/>
+                    <ComboBoxItem Content="Maserati"/>
+                    <ComboBoxItem Content="Mazda"/>
+                    <ComboBoxItem Content="Mercedes-Benz"/>
+                    <ComboBoxItem Content="Mini"/>
+                    <ComboBoxItem Content="Mitsubishi"/>
+                    <ComboBoxItem Content="Nissan"/>
+                    <ComboBoxItem Content="Peugeot"/>
+                    <ComboBoxItem Content="Porsche"/>
+                    <ComboBoxItem Content="Ram"/>
+                    <ComboBoxItem Content="Renault"/>
+                    <ComboBoxItem Content="Saab"/>
+                    <ComboBoxItem Content="Subaru"/>
+                    <ComboBoxItem Content="Suzuki"/>
+                    <ComboBoxItem Content="Tesla"/>
+                    <ComboBoxItem Content="Toyota"/>
+                    <ComboBoxItem Content="Volkswagen"/>
+                    <ComboBoxItem Content="Volvo"/>
+                </ComboBox>
             </Grid>
+
 
             <Grid Margin="0 0 0 10">
                 <Grid.ColumnDefinitions>
@@ -26,7 +70,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Model:" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 5 0"/>
-                <TextBox x:Name="ModelTextBox" Grid.Column="1"/>
+                <ComboBox x:Name="ModelComboBox" Grid.Column="1" IsEditable="False"/>
             </Grid>
 
             <Grid Margin="0 0 0 10">
@@ -35,7 +79,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Year:" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 5 0"/>
-                <TextBox x:Name="YearTextBox" Grid.Column="1" />
+                <TextBox x:Name="YearTextBox" Grid.Column="1" PreviewTextInput="NumberOnly_PreviewTextInput"/>
             </Grid>
 
             <Grid Margin="0 0 0 10">
@@ -44,7 +88,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Mileage:" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 5 0"/>
-                <TextBox x:Name="MileageTextBox" Grid.Column="1" />
+                <TextBox x:Name="MileageTextBox" Grid.Column="1" PreviewTextInput="NumberOnly_PreviewTextInput"/>
             </Grid>
 
             <Grid Margin="0 0 0 10">
@@ -62,7 +106,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Price:" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 5 0"/>
-                <TextBox x:Name="PriceTextBox" Grid.Column="1" />
+                <TextBox x:Name="PriceTextBox" Grid.Column="1" PreviewTextInput="NumberOnly_PreviewTextInput"/>
             </Grid>
 
             <Grid Margin="0 0 0 10">
@@ -100,7 +144,12 @@
                 <DatePicker x:Name="ListedDatePicker" Grid.Column="1" SelectedDate="{x:Static sys:DateTime.Now}"/>
             </Grid>
 
-            <Button Content="Add Car" Width="100" HorizontalAlignment="Right" Padding="6" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" /> <!--Click="AddCarButton_Click"/>-->
+            <StackPanel>
+                <Button Content="Add Car" Width="100" HorizontalAlignment="Right" Padding="6" Margin="0,0,0,10" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" Click="AddCarButton_Click"/>
+                <TextBlock x:Name="ErrorTextBlock" Foreground="Red" FontWeight="Bold" Visibility="Collapsed" Margin="0,0,0,10" TextWrapping="Wrap" />
+                <Button Content="Clear" Width="100" HorizontalAlignment="Right" Padding="6" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" Click="ClearButton_Click"/>
+                
+            </StackPanel>
         </StackPanel> 
     </Border>
 </UserControl>

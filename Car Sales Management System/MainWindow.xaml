@@ -22,9 +22,10 @@
         
         <!-- Toolbar -->
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10" HorizontalAlignment="Right" >
-            <Button Content="Add Car" Width="100" Margin="0,0,10,0"/>
+            <Button Content="Add Car" Width="100" Margin="0,0,10,0" Click="AddCarButton_Click"/>
             <Button Content="Edit" Width="80" Margin="0,0,10,0"/>
-            <Button Content="Delete" Width="80"/>
+            <Button Content="Delete" Width="80" Margin="0,0,10,0"/>
+            <ToggleButton x:Name="ToggleViewButton" Content="Card View" Width="100" Checked="ToggleViewButton_Checked" Unchecked="ToggleViewButton_Unchecked"/>
         </StackPanel>
 
         <usercontrols:CarFilter x:Name="CarFilterControl" Grid.Row="2"/>
@@ -92,6 +93,64 @@
                 <DataGridTextColumn Header="Listed Date" Binding="{Binding ListedDate, StringFormat=d}" Width="120"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <ScrollViewer Grid.Row="3" Margin="10" Visibility="Collapsed" x:Name="CardViewScrollViewer">
+            <ItemsControl ItemsSource="{Binding Cars}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="#DDD" BorderThickness="1" Background="White" Margin="5" Padding="10" Width="250" CornerRadius="8">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Make}" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock Text="{Binding Model}" FontSize="14"/>
+
+                                <TextBlock Text="Year: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="{Binding Year}"/>
+
+                                <TextBlock Text="Mileage: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="{Binding Mileage}"/>
+
+                                <TextBlock Text="Color: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="{Binding Color}"/>
+
+                                <TextBlock Text="Price: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="{Binding Price, StringFormat=C}"/>
+
+                                <TextBlock Text="Condition: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="{Binding Condition}"/>
+
+                                <!-- Buttons panel -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                                    <Button Content="Request Viewing"
+                                            Width="110" Height="38" Margin="5,0"
+                                            Background="#000046"
+                                            Foreground="White"
+                                            FontWeight="Bold"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Command="{Binding DataContext.RequestViewingCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"/>
+                                    <Button Content="General Enquiry"
+                                            Width="110" Height="38" Margin="5,0"
+                                            Background="#000046"
+                                            Foreground="White"
+                                            FontWeight="Bold"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Command="{Binding DataContext.GeneralEnquiryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
 
 
     </Grid>

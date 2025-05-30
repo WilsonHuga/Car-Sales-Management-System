@@ -49,16 +49,32 @@
             <TextBox x:Name="SearchTextBox" Width="400" Height="32" Padding="8,4" VerticalAlignment="Center" Margin="0,0,10,0" TextChanged="SearchTextBox_TextChanged"/>
 
             <!-- Submit Button -->
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <!-- View Listings Button -->
             <Button Content="View Listings"
                     Width="160"
                     Height="38"
-                    Margin="5,0,0,0"
                     Background="#000046"
                     Foreground="White"
                     FontWeight="Bold"
                     HorizontalAlignment="Left"
                     BorderThickness="0"
-                    Cursor="Hand"/>
+                    Cursor="Hand"
+                    Margin="0,0,20,0"/>
+
+            <!-- Clear Filter Button -->
+            <Button Content="Clear Filter"
+                    Width="160"
+                    Height="38"
+                    Background="#000046"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    HorizontalAlignment="Left"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Click="ClearFilter_Click"/>
+        </StackPanel>
+
         </StackPanel>
     </Border>
 </UserControl>

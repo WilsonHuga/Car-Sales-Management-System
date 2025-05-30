@@ -14,7 +14,7 @@ namespace Car_Sales_Management_System.DataModels
         {
             var client = new MongoClient("mongodb+srv://WilsonHuga:WilsonYoobee123@wilsonhugayoobee2025.nyfrb2o.mongodb.net/?retryWrites=true&w=majority&appName=WilsonHugaYoobee2025");
             var db = client.GetDatabase("carSales");
-            _cars = db.GetCollection<Car>("cars"); 
+            _cars = db.GetCollection<Car>("cars");
         }
 
         public List<Car> GetAllCars()
@@ -29,10 +29,11 @@ namespace Car_Sales_Management_System.DataModels
                 return new List<Car>();
             }
         }
+        public void AddCar(Car car) => _cars.InsertOne(car);
+
+
     }
 
-    //    public void AddCar(Car car) =>  
-    //        _cars.InsertOne(car);  
 
     //    public void UpdateCar(string id, Car updatedCar) =>  
     //        _cars.ReplaceOne(car => car.Id == new MongoDB.Bson.ObjectId(id), updatedCar);  
