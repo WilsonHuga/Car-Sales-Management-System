@@ -1,8 +1,7 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Diagnostics;
-
-
 
 namespace Car_Sales_Management_System.DataModels
 {
@@ -29,15 +28,30 @@ namespace Car_Sales_Management_System.DataModels
                 return new List<Car>();
             }
         }
+
         public void AddCar(Car car) => _cars.InsertOne(car);
 
+        public bool DeleteCar(string id)
+        {
+            try
+            {
+                if (!ObjectId.TryParse(id, out ObjectId objectId))
+                {
+                    Debug.WriteLine("Invalid ObjectId format: " + id);
+                    return false;
+                }
+                var filter = Builders<Car>.Filter.Eq(c => c.Id, objectId);
+                var result = _cars.DeleteOne(filter);
+                return result.DeletedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("MongoDB error in DeleteCar: " + ex.Message);
+                return false;
+            }
+        }
 
+        // public void UpdateCar(string id, Car updatedCar) =>  
+        //     _cars.ReplaceOne(car => car.Id == new MongoDB.Bson.ObjectId(id), updatedCar);  
     }
-
-
-    //    public void UpdateCar(string id, Car updatedCar) =>  
-    //        _cars.ReplaceOne(car => car.Id == new MongoDB.Bson.ObjectId(id), updatedCar);  
-
-    //    public void DeleteCar(string id) =>  
-    //        _cars.DeleteOne(car => car.Id == new MongoDB.Bson.ObjectId(id));  
 }

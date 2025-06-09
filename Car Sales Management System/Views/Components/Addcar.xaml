@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="400">
+             d:DesignHeight="500" d:DesignWidth="400" IsVisibleChanged="OnBlah">
 
     <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="20" Background="White" >
         <StackPanel>

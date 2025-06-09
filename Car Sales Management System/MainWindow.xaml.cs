@@ -11,6 +11,7 @@ using Car_Sales_Management_System.Views.Components; // Adjust namespace as neede
 
 namespace Car_Sales_Management_System
 {
+
     // Simple RelayCommand<T> implementation for command binding
     public class RelayCommand<T> : ICommand
     {
@@ -46,9 +47,13 @@ namespace Car_Sales_Management_System
         private CarService? _carService;
         public ObservableCollection<Car> Cars { get; set; }
         private List<Car> _allCars = new List<Car>();
+        private readonly UserService _userService;
+        private Window? _loginWindow;
 
         public ICommand RequestViewingCommand { get; }
         public ICommand GeneralEnquiryCommand { get; }
+        public ICommand LogoutCommand { get; }
+
 
         public MainWindow()
         {
@@ -57,17 +62,57 @@ namespace Car_Sales_Management_System
             Cars = new ObservableCollection<Car>();
             DataContext = this; // Set DataContext for binding
 
+            //Singleton instance
+            _userService = UserService.Instance;
+
+            // Subscribe to user changes
+            _userService.UserChanged += OnUserChanged;
+
             // Initialize commands
             RequestViewingCommand = new RelayCommand<Car>(RequestViewing);
             GeneralEnquiryCommand = new RelayCommand<Car>(GeneralEnquiry);
+            LogoutCommand = new RelayCommand<object>(_ => Logout());
 
             CarGrid.ItemsSource = Cars; // Bind the DataGrid to the Cars collection
             CarFilterControl.FilterChanged += ApplyFilters;
 
-            LoadCars();
+            this.Loaded += MainWindow_Loaded;
+            //LoadCars();
         }
 
-        private void LoadCars()
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_userService.IsLoggedIn)
+                {
+                    ShowMainMenu();
+                }
+                else
+                {
+                    ShowLoginSignup();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error during initialization: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void OnUserChanged(object sender, UserService.UserChangedEventArgs e)
+        {
+            // Handle user login/logout changes
+            if (e.IsLoggedIn)
+            {
+                ShowMainMenu();
+            }
+            else
+            {
+                ShowLoginSignup();
+            }
+        }
+
+        public void LoadCars()
         {
             try
             {
@@ -83,7 +128,7 @@ namespace Car_Sales_Management_System
 
                 CarFilterControl.LoadFilterOptions(cars);
 
-                MessageBox.Show($"Loaded {cars.Count} cars from DB");
+                //MessageBox.Show($"Loaded {cars.Count} cars from DB");
             }
             catch (Exception ex)
             {
@@ -160,26 +205,188 @@ namespace Car_Sales_Management_System
 
         private void RequestViewing(Car car)
         {
-            MessageBox.Show($"Viewing request for {car.Make} {car.Model} submitted!");
+            if (!_userService.IsLoggedIn)
+            {
+                MessageBox.Show("Please log in to request a viewing.", "Login Required", MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowLoginSignup();
+                return;
+            }
+
+            MessageBox.Show($"Viewing request for {car.Make} {car.Model} submitted by {_userService.CurrentUser.Fullname}!",
+                "Viewing Request", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void GeneralEnquiry(Car car)
         {
-            MessageBox.Show($"General enquiry for {car.Make} {car.Model} submitted!");
+            if (!_userService.IsLoggedIn)
+            {
+                MessageBox.Show("Please log in to make an enquiry.", "Login Required", MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowLoginSignup();
+                return;
+            }
+
+            MessageBox.Show($"General enquiry for {car.Make} {car.Model} submitted by {_userService.CurrentUser.Fullname}!",
+                "General Enquiry", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void AddCarButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!_userService.IsAdmin)
+            {
+                MessageBox.Show("Only administrators can add cars.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             var addCarWindow = new AddCarWindow();
             addCarWindow.Owner = this;  // Set owner to center modal properly
             var result = addCarWindow.ShowDialog();
 
             if (result == true)
             {
-                // Refresh your car list here
-                LoadCars();
+                LoadCars(); // Refresh car list
             }
 
         }
+
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadCars();
+        }
+
+        private void Logout()
+        {
+            _userService.Logout();
+            // The OnUserChanged event will handle showing the login screen
+        }
+
+
+        public void ShowMainMenu()
+        {
+            if (_loginWindow != null)
+            {
+                _loginWindow.Close();
+                _loginWindow = null;
+            }
+
+            // Ensure MainMenuControl is visible
+            MainMenuControl.Visibility = Visibility.Visible;
+
+            // Load cars for the main menu
+            LoadCars();
+
+            UpdateUIForUserRole();
+
+            this.Title = $"Car Sales Management System - Welcome {_userService.CurrentUser.Fullname} ({_userService.CurrentUser.Role})";
+
+            //// Optional: Customize UI based on user role
+            //if (_userService.CurrentUser?.Role == "Admin")
+            //{
+            //    // Example: Show admin-specific UI elements
+            //    // You can add admin-specific controls in XAML and toggle their visibility here
+            //    MessageBox.Show("Logged in as Admin", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
+            //else
+            //{
+            //    // Example: Show user-specific UI elements
+            //    MessageBox.Show("Logged in as User", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
+        }
+
+        private void UpdateUIForUserRole()
+        {
+            if (_userService.IsAdmin)
+            {
+                // Show admin-specific controls
+                // You can add admin-specific buttons/panels in XAML and control their visibility here
+                // Example: AdminPanel.Visibility = Visibility.Visible;
+                // Example: AddCarButton.Visibility = Visibility.Visible;
+
+                // For demonstration, we'll show a message
+                // You should replace this with actual UI updates
+                MessageBox.Show("Admin UI elements enabled");
+            }
+            else if (_userService.IsUser)
+            {
+                // Show user-specific controls and hide admin controls
+                // Example: AdminPanel.Visibility = Visibility.Collapsed;
+                // Example: AddCarButton.Visibility = Visibility.Collapsed;
+
+                // For demonstration
+                MessageBox.Show("User UI elements enabled");
+            }
+        }
+
+
+        public void ShowLoginSignup()
+        {
+            // Hide main menu and show login/signup
+            MainMenuControl.Visibility = Visibility.Collapsed;
+            this.Title = "Car Sales Management System - Please Login";
+
+
+            try
+            {
+                if (_loginWindow == null)
+                {
+                    _loginWindow = new Window
+                    {
+                        Title = "Login or Sign Up",
+                        Content = new LoginSignupWrapper(),
+                        Width = 450,
+                        Height = 500,
+                        WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                        ResizeMode = ResizeMode.NoResize,
+                        Owner = this // This will now work because MainWindow is shown
+                    };
+
+                    _loginWindow.Closed += (s, e) =>
+                    {
+                        _loginWindow = null;
+                        if (!_userService.IsLoggedIn)
+                        {
+                            if (MessageBox.Show("Are you sure you want to exit?", "Confirm Exit", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                Application.Current.Shutdown();
+                            }
+                            else
+                            {
+                                // Re-show the login window if they choose not to exit
+                                ShowLoginSignup();
+                            }
+                        }
+                    };
+
+                    _loginWindow.ContentRendered += (s, args) =>
+                    {
+                        if (_loginWindow.Content is LoginSignupWrapper wrapper)
+                        {
+                            wrapper.Login.LoginSuccess += (s2, e2) => { };
+                            wrapper.SignUp.SignupSuccess += (s2, e2) => { };
+                        }
+                    };
+
+                    _loginWindow.Show();
+                }
+                else
+                {
+                    _loginWindow.Activate();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error opening login window: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            // Unsubscribe from events
+            _userService.UserChanged -= OnUserChanged;
+            _loginWindow?.Close();
+
+            Application.Current.Shutdown();
+            base.OnClosed(e);
+        }
     }
+
 }

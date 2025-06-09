@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Car_Sales_Management_System.Views.Components"
              mc:Ignorable="d" 
              d:DesignHeight="40" d:DesignWidth="1200">
     <UserControl.Resources>
@@ -101,7 +102,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <!-- Application Title Style -->
         <Style x:Key="AppTitleStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#000046"/>
@@ -109,6 +110,35 @@
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="10,0"/>
+        </Style>
+
+        <!-- Profile Button Style -->
+        <Style x:Key="ProfileButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Margin" Value="8,3,8,3"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F5F5F5"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#E0E0E0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </UserControl.Resources>
 
@@ -122,6 +152,8 @@
             <!-- Search -->
             <ColumnDefinition Width="Auto"/>
             <!-- Title -->
+            <ColumnDefinition Width="Auto"/>
+            <!-- Profile Icon -->
         </Grid.ColumnDefinitions>
 
         <!-- Application Icon -->
@@ -140,26 +172,31 @@
         </Border>
 
         <!-- Menu Items -->
-        <Menu Grid.Column="1" Background="Transparent" VerticalAlignment="Center" Height="30" >
-            <MenuItem Header="File" Style="{StaticResource MenuItemStyle}" Margin="0 0 10 0">
+        <Menu Grid.Column="1" Background="Transparent" VerticalAlignment="Center" Height="30" Margin="10 0 10 0">
+            <MenuItem Header="File" Style="{StaticResource MenuItemStyle}" Margin="0, 0, 10, 0">
                 <MenuItem Header="New Car" Command="{Binding NewCarCommand}"/>
                 <MenuItem Header="Open Database..." Command="{Binding OpenDatabaseCommand}"/>
+                <MenuItem Header="Logout" Click="Logout_Click"/>
                 <Separator/>
-                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+                <MenuItem Header="Exit" Click="Exit" />
             </MenuItem>
-            <MenuItem Header="Edit" Style="{StaticResource MenuItemStyle}">
-                <MenuItem Header="Add New Car" Command="{Binding AddNewCarCommand}"/>
-                <MenuItem Header="Update Car" Command="{Binding UpdateCarCommand}"/>
-                <MenuItem Header="Delete Car" Command="{Binding DeleteCarCommand}"/>
-                <MenuItem Header="Show All Car" Command="{Binding ShowAllCarsCommand}"/>
+            <MenuItem Header="Edit" Style="{StaticResource MenuItemStyle}" Margin="0, 0, 10, 0">
+                <MenuItem Header="Add New Car" Click="AddCar_Click"/>
+                <MenuItem x:Name="EditCarMenuItem" Header="Edit Car"/>
+                <MenuItem x:Name="DeleteCarMenuItem" Header="Delete Car" Click="DeleteCar_Click"/>
             </MenuItem>
-            <MenuItem Header="Help" Style="{StaticResource MenuItemStyle}" Margin="10 0 0 0">>
+            <MenuItem Header="View" Style="{StaticResource MenuItemStyle}" Margin="0, 0, 10, 0">
+                <MenuItem Header="Card View" x:Name="ToggleViewMenuItem" Click="ToggleViewMenuItem_Click"/>
+                <MenuItem Header="Refresh" Click="Refresh_Click"/>
+            </MenuItem>
+            <MenuItem Header="Help" Style="{StaticResource MenuItemStyle}" Margin="0, 0, 10, 0">
                 <MenuItem Header="User Manual" Command="{Binding UserManualCommand}"/>
                 <MenuItem Header="Contact Support" Command="{Binding ContactSupportCommand}"/>
             </MenuItem>
         </Menu>
 
-        <!-- Search Box 
+        <!-- Search Box (Commented out as in original) -->
+        <!--
         <Grid Grid.Column="2" VerticalAlignment="Center" Margin="10,0" Height="28">
             <TextBox x:Name="SearchTextBox"
                      Style="{StaticResource SearchBoxStyle}"
@@ -176,11 +213,24 @@
                       Data="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 13 13.77l.27.28v.79l5 4.99L17.49 20l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"
                       Stretch="Uniform"/>
             </Button>
-        </Grid> -->
+        </Grid>
+        -->
+
+        <!-- Profile Icon Button -->
+        <Button Grid.Column="3" 
+                Style="{StaticResource ProfileButtonStyle}"
+                Click="ProfileButton_Click">
+            <Path Fill="#000046"
+                  Data="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                  Width="16"
+                  Height="16"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"/>
+        </Button>
 
         <!-- Application Title -->
-        <TextBlock Grid.Column="3" 
-                   Text="{Binding ApplicationTitle, FallbackValue='AutoMart'}"
-                   Style="{StaticResource AppTitleStyle}"/>
+        <TextBlock Grid.Column="4" 
+            Text="{Binding ApplicationTitle, FallbackValue='AutoMart'}"
+            Style="{StaticResource AppTitleStyle}"/>
     </Grid>
 </UserControl>

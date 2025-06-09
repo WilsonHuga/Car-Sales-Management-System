@@ -196,5 +196,10 @@ namespace Car_Sales_Management_System.Views.Components
             { "Volkswagen", new List<string> { "Golf", "Passat", "Tiguan" } },
             { "Volvo", new List<string> { "XC40", "XC60", "XC90" } }
         };
+
+        private void OnBlah(object sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
     }
 }
