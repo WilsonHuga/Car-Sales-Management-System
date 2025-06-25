@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="400" IsVisibleChanged="OnBlah">
+             d:DesignHeight="500" d:DesignWidth="400">
 
+    
     <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="20" Background="White" >
         <StackPanel>
             <TextBlock Text="Add Car For Sale" FontSize="18" FontWeight="Bold" Margin="0 0 0 15" HorizontalAlignment="Center"/>
@@ -97,7 +98,18 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Color:" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 5 0"/>
-                <TextBox x:Name="ColorTextBox" Grid.Column="1" />
+                <ComboBox x:Name="ColorComboBox" Grid.Column="1">
+                    <ComboBoxItem Content="Black"/>
+                    <ComboBoxItem Content="White"/>
+                    <ComboBoxItem Content="Silver"/>
+                    <ComboBoxItem Content="Red"/>
+                    <ComboBoxItem Content="Blue"/>
+                    <ComboBoxItem Content="Gray"/>
+                    <ComboBoxItem Content="Green"/>
+                    <ComboBoxItem Content="Gold"/>
+                    <ComboBoxItem Content="Brown"/>
+                    <ComboBoxItem Content="Yellow"/>
+                </ComboBox>
             </Grid>
 
             <Grid Margin="0 0 0 10">
@@ -130,7 +142,7 @@
                 <TextBlock Text="Status:" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 5 0"/>
                 <ComboBox x:Name="StatusComboBox" Grid.Column="1">
                     <ComboBoxItem Content="Available"/>
-                    <ComboBoxItem Content="Sold"/>
+                    <!--<ComboBoxItem Content="Sold"/> -->
                     <ComboBoxItem Content="Reserved"/>
                 </ComboBox>
             </Grid>
@@ -143,6 +155,18 @@
                 <TextBlock Text="Listed Date:" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 5 0"/>
                 <DatePicker x:Name="ListedDatePicker" Grid.Column="1" SelectedDate="{x:Static sys:DateTime.Now}"/>
             </Grid>
+
+            <!-- Photo Upload -->
+            <StackPanel Margin="0,10,0,0">
+                <TextBlock Text="Photos:" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,5"/>
+                <StackPanel>
+                    <Button x:Name="AddPhotoButton" Content="Add Photo" Width="100" Height="35" ToolTip="Add a car photo" />
+                    <!--Click="AddPhotoButton_Click"-->
+                    <Image x:Name="PhotoPreview" Width="Auto" Height="Auto" Margin="0,5,0,0" Stretch="UniformToFill" HorizontalAlignment="Right"/>
+
+                    <TextBlock x:Name="PhotoCountText" Margin="10,0,0,0" VerticalAlignment="Center" Text="No photos selected"/>
+                </StackPanel> 
+            </StackPanel>
 
             <StackPanel>
                 <Button Content="Add Car" Width="100" HorizontalAlignment="Right" Padding="6" Margin="0,0,0,10" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" Click="AddCarButton_Click"/>

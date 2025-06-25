@@ -15,43 +15,64 @@ namespace Car_Sales_Management_System.Views.Components
         {
             InitializeComponent();
             _userService = UserService.Instance;
+            _userService.UserChanged += OnUserChanged;
+            Loaded += (s, e) => _userService.UserChanged += OnUserChanged;
+            Unloaded += (s, e) => _userService.UserChanged -= OnUserChanged;
+
             UpdateMenuItemsForRole(_userService.IsLoggedIn, _userService.IsAdmin);
+        }
+
+        private void OnUserChanged(object sender, UserService.UserChangedEventArgs e)
+        {
+            UpdateMenuItemsForRole(e.IsLoggedIn, e.User?.Role == "Admin");
         }
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
             if (IsUserLoggedIn())
             {
-                MessageBox.Show("User is already logged in.", "Profile", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            var loginWindow = new Window
-            {
-                Title = "Login or Sign Up",
-                Content = new LoginSignupWrapper(),
-                Width = 450,
-                Height = 500,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                ResizeMode = ResizeMode.NoResize
-            };
-
-            loginWindow.ContentRendered += (s, args) =>
-            {
-                if (loginWindow.Content is LoginSignupWrapper wrapper)
+                var profileDashboard = new ProfileDasboard();
+                var profileWindow = new Window
                 {
-                    // Subscribe to the LoginSuccess event of the LoginControl
-                    wrapper.Login.LoginSuccess += (s2, e2) =>
-                    {
-                        if (IsUserLoggedIn())
-                        {
-                            loginWindow.Close();
-                        }
-                    };
-                }
-            };
+                    Title = "Profile Dashboard",
+                    Content = profileDashboard,
+                    Width = 900,
+                    Height = 700,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                    ResizeMode = ResizeMode.CanResize
+                };
+                profileWindow.ShowDialog();
+            }
+            else
+            {
+                var loginWindow = new Window
+                {
+                    Title = "Login or Sign Up",
+                    Content = new LoginSignupWrapper(),
+                    Width = 450,
+                    Height = 500,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                    ResizeMode = ResizeMode.NoResize
+                };
 
-            loginWindow.ShowDialog();
+                loginWindow.ContentRendered += (s, args) =>
+                {
+                    if (loginWindow.Content is LoginSignupWrapper wrapper)
+                    {
+                        wrapper.Login.LoginSuccess += (s2, e2) =>
+                        {
+                            if (IsUserLoggedIn())
+                            {
+                                loginWindow.Close();
+                                // Show ProfileDashboard after login
+                                ProfileButton_Click(sender, e);
+                            }
+                        };
+                    }
+                };
+
+                loginWindow.ShowDialog();
+            }
         }
 
         private bool IsUserLoggedIn()
@@ -110,33 +131,41 @@ namespace Car_Sales_Management_System.Views.Components
             }
         }
 
-        //private void EditCar_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (!_userService.IsAdmin)
-        //    {
-        //        MessageBox.Show("Only administrators can edit cars.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
-        //        return;
-        //    }
+        private void EditCar_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_userService.IsAdmin)
+            {
+                MessageBox.Show("Only administrators can edit cars.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-        //    var mainWindow = Window.GetWindow(this) as MainWindow;
-        //    if (mainWindow == null) return;
+            var mainWindow = Window.GetWindow(this) as MainWindow;
+            if (mainWindow == null) return;
 
-        //    var selectedCar = mainWindow.CarGrid.SelectedItem as Car;
-        //    if (selectedCar == null)
-        //    {
-        //        MessageBox.Show("Please select a car to edit.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Warning);
-        //        return;
-        //    }
+            var selectedCar = mainWindow.CarGrid.SelectedItem as Car;
+            if (selectedCar == null)
+            {
+                MessageBox.Show("Please select a car to edit.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-        //    var editCarWindow = new EditCarWindow(selectedCar);
-        //    editCarWindow.Owner = mainWindow;
-        //    var result = editCarWindow.ShowDialog();
+            try
+            {
+                var carService = new CarService();
+                var editCarWindow = new EditCarWindow(selectedCar, carService);
+                editCarWindow.Owner = mainWindow;
+                var result = editCarWindow.ShowDialog();
 
-        //    if (result == true)
-        //    {
-        //        mainWindow.LoadCars();
-        //    }
-        //}
+                if (result == true)
+                {
+                    mainWindow.LoadCars();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error opening edit window: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
         private void DeleteCar_Click(object sender, RoutedEventArgs e)
         {

@@ -6,7 +6,123 @@
              xmlns:local="clr-namespace:Car_Sales_Management_System.Views.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" Height="400" Width="400">
+
+    <UserControl.Resources>
+        <!-- Style for TextBox -->
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="BorderBrush" Value="#D3D3D3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" 
+                        Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="2"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#000046"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#A0A0A0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--Style for PasswordBox-->
+        <Style TargetType="PasswordBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="BorderBrush" Value="#D3D3D3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="2"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#000046"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#A0A0A0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Style for Buttons -->
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#000046"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                        Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1E1E6A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#000032"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+    
+    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center"
+            Background="White" Height="400" Width="400">
         <Border.Effect>
             <DropShadowEffect BlurRadius="10" ShadowDepth="3" Opacity="0.3"/>
         </Border.Effect>
@@ -15,28 +131,29 @@
             <TextBlock Text="Register New User" FontWeight="Bold" FontSize="18" Margin="0,0,0,10" TextAlignment="Center"/>
 
             <TextBlock Text="First Name"/>
-            <TextBox x:Name="FirstNameTextBox" Margin="0,5"/>
+            <TextBox x:Name="FirstNameTextBox" Margin="0,5" Height="30" Padding="10,5" Text=""/>
 
             <TextBlock Text="Last Name"/>
-            <TextBox x:Name="LastNameTextBox" Margin="0,5"/>
+            <TextBox x:Name="LastNameTextBox" Margin="0,5" Height="30" Padding="10,5"/>
 
             <TextBlock Text="Email"/>
-            <TextBox x:Name="EmailTextBox" Margin="0,5"/>
+            <TextBox x:Name="EmailTextBox" Margin="0,5" Height="30" Padding="10,5"/>
 
             <TextBlock Text="Password"/>
-            <PasswordBox x:Name="PasswordBox" Margin="0,5"/>
+            <PasswordBox x:Name="PasswordBox" Margin="0,5" Height="30" Padding="10,5"/>
 
             <TextBlock Text="Phone"/>
-            <TextBox x:Name="PhoneTextBox" Margin="0,5"/>
-            
+            <TextBox x:Name="PhoneTextBox" Margin="0,5" Height="30" Padding="10,5"/>
+
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
-                <Button Content="Submit" Width="80" Margin="0,0,10,0" Padding="6" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" Click="Submit_Click" />
-                <Button Content="Clear" Width="80" Padding="6" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" Click="Clear_Click" />
+                <Button Content="Submit"  Margin="0,0,10,0" Padding="6" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" Click="Submit_Click"/>
+                <Button Content="Clear" Padding="6" Background="#7A7A7A" Foreground="White" BorderThickness="0" Cursor="Hand" Click="Clear_Click"/>
             </StackPanel>
+
             <TextBlock x:Name="StatusTextBlock" Foreground="Green" Margin="0,1"/>
 
-            <Button Content="Already a member?" HorizontalAlignment="Center" Margin="0,10,0,0" Click="SwitchToLogin_Click" Background="Transparent" BorderBrush="{x:Null}" Foreground="Blue"/>
-            <!-- <Button Content="Cancel" Width="80" Margin="10,0,0,0" Padding="6" Background="DarkRed" Foreground="White" BorderThickness="0" Cursor="Hand" Click="Cancel_Click"/> -->
+            <Button Content="Already a member?" HorizontalAlignment="Center" Margin="0,10,0,0" Click="SwitchToLogin_Click"
+                    Background="Transparent" BorderThickness="0" Foreground="Blue" Cursor="Hand"/>
         </StackPanel>
     </Border>
 </UserControl>

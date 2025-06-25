@@ -1,8 +1,11 @@
 ﻿using Car_Sales_Management_System.DataModels;
+using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace Car_Sales_Management_System.Views.Components
 {
@@ -10,11 +13,13 @@ namespace Car_Sales_Management_System.Views.Components
     {
         public event EventHandler CarAdded;
         private readonly CarService _carService;
+        private readonly List<string> _photoBase64Strings;
 
         public Addcar()
         {
             InitializeComponent();
             _carService = new CarService();
+            //_photoBase64Strings = new List<string>();
             MakeComboBox.SelectionChanged += MakeComboBox_SelectionChanged;
             ListedDatePicker.SelectedDate = DateTime.Now;
         }
@@ -56,6 +61,7 @@ namespace Car_Sales_Management_System.Views.Components
                 // Retrieve ComboBox values safely
                 var condition = (ConditionComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
                 var status = (StatusComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                var color = (ColorComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
 
                 if (string.IsNullOrEmpty(condition) || string.IsNullOrEmpty(status))
                 {
@@ -69,12 +75,13 @@ namespace Car_Sales_Management_System.Views.Components
                     Model = ModelComboBox.Text.Trim(),
                     Year = year,
                     Mileage = mileage,
-                    Color = ColorTextBox.Text.Trim(),
+                    Color = color,
                     Price = price,
                     Condition = condition,
                     Status = status,
                     ListedDate = ListedDatePicker.SelectedDate.Value.ToUniversalTime(),
-                    VIN = "" // Optional: you can add a VINTextBox and use VINTextBox.Text.Trim()
+                    VIN = "", // Optional: you can add a VINTextBox and use VINTextBox.Text.Trim()
+                   // Photos = _photoBase64Strings // for photos
                 };
 
                 _carService.AddCar(car);
@@ -108,7 +115,7 @@ namespace Car_Sales_Management_System.Views.Components
                    isValidModel &&
                    int.TryParse(YearTextBox.Text, out year) &&
                    int.TryParse(MileageTextBox.Text, out mileage) &&
-                   !string.IsNullOrWhiteSpace(ColorTextBox.Text) &&
+                   ColorComboBox.SelectedItem != null &&
                    int.TryParse(PriceTextBox.Text, out price) &&
                    ConditionComboBox.SelectedItem != null &&
                    StatusComboBox.SelectedItem != null &&
@@ -134,12 +141,15 @@ namespace Car_Sales_Management_System.Views.Components
             ModelComboBox.Text = "";
             YearTextBox.Text = "";
             MileageTextBox.Text = "";
-            ColorTextBox.Text = "";
+            ColorComboBox.SelectedIndex = -1;
             PriceTextBox.Text = "";
             ConditionComboBox.SelectedIndex = -1;
             StatusComboBox.SelectedIndex = -1;
             ListedDatePicker.SelectedDate = DateTime.Now;
+            //_photoBase64Strings.Clear(); // Clear photos
+            //PhotoCountText.Text = "No photos selected";
             ErrorTextBlock.Visibility = Visibility.Collapsed;
+
         }
 
 
@@ -147,6 +157,35 @@ namespace Car_Sales_Management_System.Views.Components
         {
             e.Handled = !int.TryParse(e.Text, out _);
         }
+
+        //private void AddPhotoButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    OpenFileDialog openFileDialog = new OpenFileDialog
+        //    {
+        //        Filter = "Image files (*.png;*.jpeg;*.jpg)|*.png;*.jpeg;*.jpg",
+        //        Multiselect = true
+        //    };
+
+        //    if (openFileDialog.ShowDialog() == true)
+        //    {
+        //        foreach (string filename in openFileDialog.FileNames)
+        //        {
+        //            try
+        //            {
+        //                byte[] imageBytes = File.ReadAllBytes(filename);
+        //                string base64String = Convert.ToBase64String(imageBytes);
+        //                _photoBase64Strings.Add(base64String);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        //            }
+        //        }
+        //        PhotoCountText.Text = $"{_photoBase64Strings.Count} photo(s) selected";
+        //    }
+        //}
+
+
 
 
 
@@ -196,10 +235,5 @@ namespace Car_Sales_Management_System.Views.Components
             { "Volkswagen", new List<string> { "Golf", "Passat", "Tiguan" } },
             { "Volvo", new List<string> { "XC40", "XC60", "XC90" } }
         };
-
-        private void OnBlah(object sender, DependencyPropertyChangedEventArgs e)
-        {
-
-        }
     }
 }

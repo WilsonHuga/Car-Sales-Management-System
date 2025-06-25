@@ -1,19 +1,8 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-//public enum CarCondition
-//{
-//    New,
-//    Used
-//}
 
-//public enum CarStatus
-//{
-//    Available,
-//    Reserved,
-//    Sold
-//}
-
+[BsonIgnoreExtraElements]
 public class Car
 {
     [BsonId]
@@ -49,6 +38,9 @@ public class Car
     [BsonElement("listedDate")]
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime ListedDate { get; set; }
+
+    //[BsonElement("photos")]
+    //public List<string> Photos { get; set; } = new List<string>();
 
 
 }

@@ -6,50 +6,134 @@
         WindowStartupLocation="CenterScreen"
         Background="#FAFAFA"
         x:Name="MainMenuControl">
+    <Window.Resources>
+
+        <!-- Main Button Style -->
+        <Style x:Key="MainButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#000046"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1E1E6A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#000032"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Toggle Button Style matching MainButtonStyle -->
+        <Style x:Key="MainToggleButtonStyle" TargetType="ToggleButton">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#000046"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1E1E6A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#000032"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1E1E6A"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header -->
             <RowDefinition Height="Auto"/>
-            <!-- Toolbar -->
             <RowDefinition Height="Auto"/>
-            
             <RowDefinition Height="*"/>
-            <!-- Content -->
         </Grid.RowDefinitions>
 
         <usercontrols:HeaderUserControl Grid.Row="0" Margin="10,0,10,0"/>
-        
+
         <!-- Toolbar -->
-        <StackPanel x:Name="Toolbar" Panel.ZIndex="100" Visibility="Visible" Orientation="Horizontal" Grid.Row="1" Margin="10" HorizontalAlignment="Right" >
-            <Button Content="Add Car" Width="100" Margin="0,0,10,0" Click="AddCarButton_Click"/>
-            <Button Content="Edit" Width="80" Margin="0,0,10,0"/>
-            <Button Content="Delete" Width="80" Margin="0,0,10,0" Visibility="Collapsed"/>
-            <Button Content="Refresh" Width="80" Margin="0,0,10,0" Click="RefreshButton_Click"/>
-            <ToggleButton x:Name="ToggleViewButton" Content="Card View" Width="100" Checked="ToggleViewButton_Checked" Unchecked="ToggleViewButton_Unchecked"/>
+        <StackPanel x:Name="Toolbar" Panel.ZIndex="100" Visibility="Visible" Orientation="Horizontal" Grid.Row="1" Margin="10" HorizontalAlignment="Right">
+            <Button x:Name="AddCarButton" Style="{StaticResource MainButtonStyle}" Content="Add Car" Width="100" Margin="0,0,10,0" Click="AddCarButton_Click" ToolTip="Add a new car (Admin only)" Visibility="Collapsed"/>
+            <Button x:Name="EditCarButton" Style="{StaticResource MainButtonStyle}" Content="Edit" Width="80" Margin="0,0,10,0" Click="EditCarButton_Click" ToolTip="Edit the selected car (Admin only)" Visibility="Collapsed"/>
+            <Button x:Name="DeleteCarButton" Style="{StaticResource MainButtonStyle}" Content="Delete" Width="80" Margin="0,0,10,0" Click="DeleteCarButton_Click" ToolTip="Delete the selected car (Admin only)" Visibility="Collapsed"/>
+            <Button x:Name="ManageUsersButton" Style="{StaticResource MainButtonStyle}" Content="Manage Users" Width="100" Margin="0,0,10,0" Click="ManageUsersButton_Click" ToolTip="Manage user accounts (Admin only)" Visibility="Collapsed"/>
+            <Button x:Name="ManageInquiriesButton" Style="{StaticResource MainButtonStyle}" Content="Manage Inquiries" Width="120" Margin="0,0,10,0" Click="ManageInquiriesButton_Click" ToolTip="Manage inquiries (Admin only)" Visibility="Collapsed"/>
+            <Button x:Name="ReportsButton" Style="{StaticResource MainButtonStyle}" Content="Reports" Width="80" Margin="0,0,10,0" Click="ReportsButton_Click" ToolTip="View inventory reports (Admin only)" Visibility="Collapsed"/>
+            <Button x:Name="RefreshButton" Style="{StaticResource MainButtonStyle}" Content="Refresh" Width="80" Margin="0,0,10,0" Click="RefreshButton_Click"/>
+            <ToggleButton x:Name="ToggleViewButton"
+                          Style="{StaticResource MainToggleButtonStyle}"
+                          Content="Card View"
+                          Checked="ToggleViewButton_Checked"
+                          Unchecked="ToggleViewButton_Unchecked"
+                          ToolTip="Switch between grid and card views"/>
         </StackPanel>
 
         <usercontrols:CarFilter x:Name="CarFilterControl" Grid.Row="2"/>
 
-        <!-- Car DataGrid -->
         <DataGrid x:Name="CarGrid" 
-          Grid.Row="3"
-          AutoGenerateColumns="False"
-          Margin="10"
-          Background="#F5F5F5"
-          BorderBrush="#D3D3D3"
-          BorderThickness="1"
-          RowHeight="40"
-          GridLinesVisibility="Horizontal"
-          AlternatingRowBackground="#F0F0F0"
-          CanUserAddRows="False"
-          CanUserSortColumns="True"
-          IsReadOnly="True"
-          SelectionMode="Single"
-          SelectionUnit="FullRow"
-          HeadersVisibility="Column">
-
+                  Grid.Row="3"
+                  AutoGenerateColumns="False"
+                  Margin="10"
+                  Background="#F5F5F5"
+                  BorderBrush="#D3D3D3"
+                  BorderThickness="1"
+                  RowHeight="40"
+                  GridLinesVisibility="Horizontal"
+                  AlternatingRowBackground="#F0F0F0"
+                  CanUserAddRows="False"
+                  CanUserSortColumns="True"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow"
+                  HeadersVisibility="Column">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Background" Value="#E0E0E0"/>
@@ -65,7 +149,6 @@
                         </Trigger>
                     </Style.Triggers>
                 </Style>
-
                 <Style TargetType="{x:Type DataGridCell}">
                     <Setter Property="Padding" Value="10,5"/>
                     <Setter Property="FontSize" Value="13"/>
@@ -82,7 +165,6 @@
                     </Style.Triggers>
                 </Style>
             </DataGrid.Resources>
-
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Make" Binding="{Binding Make}" Width="120"/>
                 <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="120"/>
@@ -109,41 +191,30 @@
                         <Border BorderBrush="#DDD" BorderThickness="1" Background="White" Margin="5" Padding="10" Width="250" CornerRadius="8">
                             <StackPanel>
                                 <TextBlock Text="{Binding Make}" FontWeight="Bold" FontSize="16"/>
-                                <TextBlock Text="{Binding Model}" FontSize="14"/>
+                                <TextBlock Text="{Binding Model}" FontSize="14" Margin="0,2,0,8"/>
 
-                                <TextBlock Text="Year: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="Year:" FontWeight="SemiBold" Foreground="Gray"/>
                                 <TextBlock Text="{Binding Year}"/>
 
-                                <TextBlock Text="Mileage: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
-                                <TextBlock Text="{Binding Mileage}"/>
+                                <TextBlock Text="Mileage:" FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="{Binding Mileage, StringFormat={}{0:N0} km}"/>
 
-                                <TextBlock Text="Color: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="Color:" FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
                                 <TextBlock Text="{Binding Color}"/>
 
-                                <TextBlock Text="Price: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="Price:" FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
                                 <TextBlock Text="{Binding Price, StringFormat=C}"/>
 
-                                <TextBlock Text="Condition: " FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
+                                <TextBlock Text="Condition:" FontWeight="SemiBold" Foreground="Gray" Margin="0,8,0,0"/>
                                 <TextBlock Text="{Binding Condition}"/>
 
-                                <!-- Buttons panel -->
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
-                                    <Button Content="Request Viewing"
+                                    <Button x:Name="RequestViewingButton" Style="{StaticResource MainButtonStyle}" Content="Request Viewing"
                                             Width="110" Height="38" Margin="5,0"
-                                            Background="#000046"
-                                            Foreground="White"
-                                            FontWeight="Bold"
-                                            BorderThickness="0"
-                                            Cursor="Hand"
                                             Command="{Binding DataContext.RequestViewingCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             CommandParameter="{Binding}"/>
-                                    <Button Content="General Enquiry"
+                                    <Button x:Name="GeneralEnquiryButton" Style="{StaticResource MainButtonStyle}" Content="General Enquiry"
                                             Width="110" Height="38" Margin="5,0"
-                                            Background="#000046"
-                                            Foreground="White"
-                                            FontWeight="Bold"
-                                            BorderThickness="0"
-                                            Cursor="Hand"
                                             Command="{Binding DataContext.GeneralEnquiryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             CommandParameter="{Binding}"/>
                                 </StackPanel>
@@ -153,8 +224,5 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-
-
-
     </Grid>
 </Window>

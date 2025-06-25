@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Car_Sales_Management_System"
+             xmlns:converters="clr-namespace:Car_Sales_Management_System.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <!--<converters:Base64ToImageConverter x:Key="Base64ToImageConverter"/> -->
     </Application.Resources>
 </Application>

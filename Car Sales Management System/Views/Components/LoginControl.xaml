@@ -8,22 +8,85 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <Style x:Key="LinkButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="Blue"/>
-            <Setter Property="Cursor" Value="Hand"/>
+
+        <!-- Style for TextBox -->
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="BorderBrush" Value="#D3D3D3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline"/>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="2"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#000046"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#A0A0A0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Style for PasswordBox -->
+        <Style TargetType="PasswordBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="BorderBrush" Value="#D3D3D3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="2"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#000046"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#A0A0A0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
-    
-    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center"
+
+    <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Padding="20"
+            HorizontalAlignment="Center" VerticalAlignment="Center"
             Background="White" Height="400" Width="400">
         <Border.Effect>
             <DropShadowEffect BlurRadius="10" ShadowDepth="3" Opacity="0.3"/>
@@ -33,21 +96,36 @@
             <TextBlock Text="Login" FontWeight="Bold" FontSize="18" Margin="0,0,0,10" TextAlignment="Center"/>
 
             <TextBlock Text="Email"/>
-            <TextBox x:Name="EmailTextBox" Margin="0,5"/>
+            <TextBox x:Name="EmailTextBox" Margin="0,5" Height="35" Padding="10,5"/>
 
             <TextBlock Text="Password"/>
-            <PasswordBox x:Name="PasswordBox" Margin="0,5"/>
+            <PasswordBox x:Name="PasswordBox" Margin="0,5" Height="35" Padding="10,5"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
-                <Button Content="Login" Width="80" Margin="0,0,10,0" Padding="6" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" Click="Login_Click"/>
-                <Button Content="Clear" Width="80" Padding="6" Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand" Click="Clear_Click"/>
+                <Button Content="Login" Width="100" Height="30" Padding="6" Margin="0,0,10,0"
+                        Background="#000046" Foreground="White" BorderThickness="0" Cursor="Hand"
+                        Click="Login_Click"/>
+                <Button Content="Clear" Width="100" Height="30" Padding="6"
+                        Background="#7A7A7A" Foreground="White" BorderThickness="0" Cursor="Hand"
+                        Click="Clear_Click"/>
             </StackPanel>
 
             <TextBlock x:Name="StatusTextBlock" Foreground="Green" Margin="0,10"/>
-            
-            <Button Content="Forgot Password?" Click="ForgotPassword_Click" Margin="0,0,0,10" Style="{StaticResource LinkButtonStyle}" HorizontalAlignment="Center"/>
-            <Button Content="Need an account? Sign up" HorizontalAlignment="Center" Margin="0,10,0,0" Click="SwitchToSignup_Click" Background="Transparent" BorderBrush="{x:Null}" Foreground="Blue"/>
-            <!-- <Button Content="Cancel" Width="80" Margin="10,0,0,0" Padding="6" Background="DarkRed" Foreground="White" BorderThickness="0" Cursor="Hand" Click="Cancel_Click"/> -->
+
+            <Button Content="Forgot Password?" Click="ForgotPassword_Click" Margin="0,0,0,10"
+                    Background="Transparent" BorderThickness="0" Foreground="Blue" Cursor="Hand"
+                    HorizontalAlignment="Center">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline"
+                                   Foreground="{TemplateBinding Foreground}" Cursor="Hand"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button Content="Need an account? Sign up"
+                    HorizontalAlignment="Center" Margin="0,10,0,0" Click="SwitchToSignup_Click"
+                    Background="Transparent" BorderThickness="0" Foreground="Blue" Cursor="Hand"/>
         </StackPanel>
     </Border>
 </UserControl>

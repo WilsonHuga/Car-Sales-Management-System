@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Car_Sales_Management_System.DataModels
 {
+    [BsonIgnoreExtraElements]
     public class User
     {
         [BsonId]
@@ -23,6 +24,20 @@ namespace Car_Sales_Management_System.DataModels
 
         [BsonElement("role")]
         public string Role { get; set; } = "User"; // Default role is User
+
+        [BsonElement("profilePicture")]
+        public byte[] ProfilePicture { get; set; }
+
+        [BsonElement("carsViewed")]
+        public int CarsViewed { get; set; } = 0;
+
+        [BsonElement("inquiriesMade")]
+        public int InquiriesMade { get; set; } = 0;
+
+        [BsonElement("lastLogin")]
+        public DateTime? LastLogin { get; set; }
+
+
 
     }
 }

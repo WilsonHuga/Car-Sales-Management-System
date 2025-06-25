@@ -1,0 +1,188 @@
+﻿<UserControl x:Class="Car_Sales_Management_System.Views.Components.ProfileDasboard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Car_Sales_Management_System.Views.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="900">
+    <UserControl.Resources>
+        <!-- Text Styles -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#555"/>
+            <Setter Property="Margin" Value="0,4"/>
+        </Style>
+        <Style x:Key="ValueStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#111"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,4"/>
+        </Style>
+        <Style x:Key="HeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#000046"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#000046"/>
+            <Setter Property="Margin" Value="0,15,0,10"/>
+        </Style>
+
+        <!-- Divider Line -->
+        <Style x:Key="DividerLine" TargetType="Rectangle">
+            <Setter Property="Height" Value="1"/>
+            <Setter Property="Fill" Value="#DDD"/>
+            <Setter Property="Margin" Value="0,10"/>
+        </Style>
+
+        <!-- Button Styles -->
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#000046"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="5,10,0,0"/>
+            <Setter Property="Width" Value="140"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DeleteButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+            <Setter Property="Background" Value="#D32F2F"/>
+        </Style>
+
+        <!-- Profile Picture Style -->
+        <Style x:Key="ProfilePictureStyle" TargetType="Image">
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Height" Value="120"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="Stretch" Value="UniformToFill"/>
+        </Style>
+
+        <!-- Converter for Profile Picture -->
+        <local:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
+    </UserControl.Resources>
+
+    <Border Margin="20"
+            Padding="20"
+            Background="White"
+            CornerRadius="12"
+            BorderBrush="#DDD"
+            BorderThickness="1"
+            SnapsToDevicePixels="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Main Title -->
+            <TextBlock Text="Profile Dashboard" Style="{StaticResource HeaderStyle}" Grid.Row="0"/>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <!-- User Information Section -->
+                    <TextBlock Text="User Information" Style="{StaticResource SectionTitleStyle}"/>
+                    <Grid Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Profile Picture -->
+                        <Image x:Name="ProfilePicture" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource ProfilePictureStyle}"
+                               Source="{Binding ProfilePicture, Converter={StaticResource ByteArrayToImageConverter}}"/>
+
+                        <TextBlock Text="Full Name:" Grid.Row="0" Grid.Column="1" Style="{StaticResource LabelStyle}"/>
+                        <TextBlock Text="{Binding Fullname}" Grid.Row="0" Grid.Column="2" Style="{StaticResource ValueStyle}"/>
+
+                        <TextBlock Text="Email:" Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelStyle}"/>
+                        <TextBlock Text="{Binding Email}" Grid.Row="1" Grid.Column="2" Style="{StaticResource ValueStyle}"/>
+
+                        <TextBlock Text="Role:" Grid.Row="2" Grid.Column="1" Style="{StaticResource LabelStyle}"/>
+                        <TextBlock Text="{Binding Role}" Grid.Row="2" Grid.Column="2" Style="{StaticResource ValueStyle}"/>
+                    </Grid>
+
+                    <Rectangle Style="{StaticResource DividerLine}"/>
+
+                    <!-- Activity Summary -->
+                    <TextBlock Text="Activity Summary" Style="{StaticResource SectionTitleStyle}"/>
+                    <Grid Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Cars Viewed:" Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelStyle}"/>
+                        <TextBlock Text="{Binding CarsViewed}" Grid.Row="0" Grid.Column="1" Style="{StaticResource ValueStyle}"/>
+
+                        <TextBlock Text="Inquiries Made:" Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}"/>
+                        <TextBlock Text="{Binding InquiriesMade}" Grid.Row="1" Grid.Column="1" Style="{StaticResource ValueStyle}"/>
+                    </Grid>
+
+                    <Rectangle Style="{StaticResource DividerLine}"/>
+
+                    <!-- Settings -->
+                    <TextBlock Text="Settings" Style="{StaticResource SectionTitleStyle}" Margin="0,10,0,5"/>
+
+                    <StackPanel Orientation="Vertical" Margin="0,5,0,5">
+                        <!-- Theme Selection -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 10 0 10">
+                            <TextBlock Text="Theme:" FontSize="13" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="ThemeComboBox" Width="130" FontSize="13" VerticalAlignment="Center" SelectionChanged="ThemeComboBox_SelectionChanged">
+                                <ComboBoxItem Content="Light" IsSelected="True"/>
+                                <ComboBoxItem Content="Dark"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Language Selection -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 10 0 10">
+                            <TextBlock Text="Language:" FontSize="13" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="LanguageComboBox" Width="130" FontSize="13" VerticalAlignment="Center" SelectionChanged="LanguageComboBox_SelectionChanged">
+                                <ComboBoxItem Content="English" IsSelected="True"/>
+                                <ComboBoxItem Content="Spanish"/>
+                                <ComboBoxItem Content="French"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Rectangle Style="{StaticResource DividerLine}"/>
+
+                    <!-- Actions -->
+                    <WrapPanel HorizontalAlignment="Right">
+                        <Button Content="Edit Profile" Style="{StaticResource ButtonStyle}" Click="EditProfile_Click"/>
+                        <Button Content="Export Data" Style="{StaticResource ButtonStyle}" Click="ExportData_Click"/>
+                        <Button Content="Delete Account" Style="{StaticResource DeleteButtonStyle}" Click="DeleteAccount_Click"/>
+                        <Button Content="Close" Style="{StaticResource ButtonStyle}" Click="Close_Click"/>
+                    </WrapPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>

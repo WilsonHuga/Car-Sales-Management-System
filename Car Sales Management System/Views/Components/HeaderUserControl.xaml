@@ -174,8 +174,9 @@
         <!-- Menu Items -->
         <Menu Grid.Column="1" Background="Transparent" VerticalAlignment="Center" Height="30" Margin="10 0 10 0">
             <MenuItem Header="File" Style="{StaticResource MenuItemStyle}" Margin="0, 0, 10, 0">
-                <MenuItem Header="New Car" Command="{Binding NewCarCommand}"/>
                 <MenuItem Header="Open Database..." Command="{Binding OpenDatabaseCommand}"/>
+                <Separator/>
+                <MenuItem Header="Account Settings"/>
                 <MenuItem Header="Logout" Click="Logout_Click"/>
                 <Separator/>
                 <MenuItem Header="Exit" Click="Exit" />
@@ -194,27 +195,6 @@
                 <MenuItem Header="Contact Support" Command="{Binding ContactSupportCommand}"/>
             </MenuItem>
         </Menu>
-
-        <!-- Search Box (Commented out as in original) -->
-        <!--
-        <Grid Grid.Column="2" VerticalAlignment="Center" Margin="10,0" Height="28">
-            <TextBox x:Name="SearchTextBox"
-                     Style="{StaticResource SearchBoxStyle}"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     Padding="8,4,24,4"/>
-            <Button Width="20" 
-                    Height="20" 
-                    HorizontalAlignment="Right" 
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    BorderBrush="{x:Null}"
-                    Margin="0,0,4,0">
-                <Path Fill="#666666"
-                      Data="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 13 13.77l.27.28v.79l5 4.99L17.49 20l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"
-                      Stretch="Uniform"/>
-            </Button>
-        </Grid>
-        -->
 
         <!-- Profile Icon Button -->
         <Button Grid.Column="3" 

@@ -1,7 +1,9 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace Car_Sales_Management_System.DataModels
@@ -24,13 +26,18 @@ namespace Car_Sales_Management_System.DataModels
             public bool IsLoggedIn { get; set; }
         }
 
-
+        public bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+            return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        }
 
 
         public class PasswordResetToken
         {
-            public string Email { get; set; }
-            public string Token { get; set; }
+            public string? Email { get; set; }
+            public string? Token { get; set; }
             public DateTime Expiry { get; set; }
         }
 
@@ -57,7 +64,7 @@ namespace Car_Sales_Management_System.DataModels
             var db = client.GetDatabase("carSales");
             _users = db.GetCollection<User>("users");
 
-           // MessageBox.Show("Connected to MongoDB successfully!", "Connection Status", MessageBoxButton.OK, MessageBoxImage.Information);
+            // MessageBox.Show("Connected to MongoDB successfully!", "Connection Status", MessageBoxButton.OK, MessageBoxImage.Information);
 
             SeedAdminAccount();
         }
@@ -90,6 +97,20 @@ namespace Car_Sales_Management_System.DataModels
             CurrentUser = user;
         }
 
+        public bool Login(string email, string password)
+        {
+            if (ValidateUser(email, password))
+            {
+                var user = GetUserByEmail(email);
+                CurrentUser = user;
+                return true;
+            }
+            return false;
+        }
+        public void Logout()
+        {
+            CurrentUser = null;
+        }
 
 
         public void AddUser(User user)
@@ -119,6 +140,20 @@ namespace Car_Sales_Management_System.DataModels
             }
         }
 
+        public List<User> GetAllUsers()
+        {
+            try
+            {
+                return _users.Find(user => true).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("MongoDB error: " + ex.Message);
+                return new List<User>();
+            }
+        }
+
+
         public bool ValidateUser(string email, string password)
         {
             try
@@ -137,19 +172,120 @@ namespace Car_Sales_Management_System.DataModels
             }
         }
 
-        public bool Login(string email, string password)
+        public bool UpdateUserDetails(string email, string fullname, string phone)
         {
-            if (ValidateUser(email, password))
+            try
             {
-                var user = GetUserByEmail(email);
-                CurrentUser = user;
-                return true;
+                if (!IsValidEmail(email))
+                    throw new ArgumentException("Invalid email format.", nameof(email));
+
+                var update = Builders<User>.Update
+                    .Set(u => u.Fullname, fullname)
+                    .Set(u => u.Phone, phone);
+
+                var result = _users.UpdateOne(u => u.Email == email, update);
+                Debug.WriteLine($"[UpdateUserDetails] {DateTime.UtcNow}: User {email} updated: {result.ModifiedCount > 0}");
+                return result.ModifiedCount > 0;
             }
-            return false;
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[UpdateUserDetails] {DateTime.UtcNow}: MongoDB error: {ex.Message}");
+                throw;
+            }
         }
-        public void Logout()
+
+        public bool UpdateUserPassword(string email, string newPassword)
         {
-            CurrentUser = null;
+            try
+            {
+                if (!IsValidEmail(email))
+                    throw new ArgumentException("Invalid email format.", nameof(email));
+                if (string.IsNullOrWhiteSpace(newPassword))
+                    throw new ArgumentException("New password cannot be empty.", nameof(newPassword));
+
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                var update = Builders<User>.Update.Set(u => u.Password, hashedPassword);
+                var result = _users.UpdateOne(u => u.Email == email, update);
+                Debug.WriteLine($"[UpdateUserPassword] {DateTime.UtcNow}: Password updated for {email}: {result.ModifiedCount > 0}");
+                return result.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[UpdateUserPassword] {DateTime.UtcNow}: MongoDB error: {ex.Message}");
+                throw;
+            }
+        }
+
+        public bool UpdateUserRole(string email, string newRole)
+        {
+            try
+            {
+                if (!IsValidEmail(email))
+                    throw new ArgumentException("Invalid email format.", nameof(email));
+                if (email == "admin@gmail.com")
+                    throw new InvalidOperationException("The default admin account role cannot be modified.");
+                if (string.IsNullOrWhiteSpace(newRole) || (!newRole.Equals("User", StringComparison.OrdinalIgnoreCase) && !newRole.Equals("Admin", StringComparison.OrdinalIgnoreCase)))
+                    throw new ArgumentException("Role must be 'User' or 'Admin'.", nameof(newRole));
+
+                // Normalize role to standard casing
+                newRole = newRole.Equals("user", StringComparison.OrdinalIgnoreCase) ? "User" : "Admin";
+
+                // Check if user exists
+                var user = _users.Find(u => u.Email == email).FirstOrDefault();
+                if (user == null)
+                {
+                    Debug.WriteLine($"[UpdateUserRole] {DateTime.UtcNow}: User {email} not found.");
+                    return false;
+                }
+
+                // Check if existing role is the same as new role
+                string currentRole = user.Role ?? "User"; // Default to "User" if null
+                if (currentRole.Equals(newRole, StringComparison.OrdinalIgnoreCase))
+                {
+                    Debug.WriteLine($"[UpdateUserRole] {DateTime.UtcNow}: Role for {email} is already {newRole}. No update needed.");
+                    return true;
+                }
+
+                var update = Builders<User>.Update.Set(u => u.Role, newRole);
+                var result = _users.UpdateOne(u => u.Email == email, update);
+                Debug.WriteLine($"[UpdateUserRole] {DateTime.UtcNow}: Role updated for {email} to {newRole}: {result.ModifiedCount > 0}");
+                return result.ModifiedCount > 0 || currentRole.Equals(newRole, StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[UpdateUserRole] {DateTime.UtcNow}: MongoDB error: {ex.Message}");
+                throw;
+            }
+        }
+
+        public bool DeleteUser(string email)
+        {
+            try
+            {
+                if (!IsValidEmail(email))
+                    throw new ArgumentException("Invalid email format.", nameof(email));
+                if (email == "admin@gmail.com")
+                    throw new InvalidOperationException("The default admin account cannot be deleted.");
+
+                var result = _users.DeleteOne(u => u.Email == email);
+                Debug.WriteLine($"[DeleteUser] {DateTime.UtcNow}: User {email} deletion attempt: {result.DeletedCount} documents deleted");
+
+                if (result.DeletedCount == 0)
+                {
+                    Debug.WriteLine($"[DeleteUser] {DateTime.UtcNow}: No user found with email {email}");
+                    return false;
+                }
+
+                if (CurrentUser != null && CurrentUser.Email == email)
+                    Logout();
+
+                return result.DeletedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[DeleteUser] {DateTime.UtcNow}: MongoDB error: {ex.Message}");
+                throw;
+            }
         }
 
         public string GeneratePasswordResetToken(string email)
@@ -189,6 +325,7 @@ namespace Car_Sales_Management_System.DataModels
                 throw new InvalidOperationException("Invalid or expired reset token.");
             }
         }
+
         private void SeedAdminAccount()
         {
             var adminEmail = "admin@gmail.com";
@@ -208,11 +345,98 @@ namespace Car_Sales_Management_System.DataModels
             }
         }
 
-        public bool UpdateUserRole(string email, string newRole)
+        // User activity tracking
+        public void IncrementCarsViewed(string email)
         {
-            var update = Builders<User>.Update.Set(u => u.Role, newRole);
-            var result = _users.UpdateOne(u => u.Email == email, update);
-            return result.ModifiedCount > 0;
+            try
+            {
+                var update = Builders<User>.Update.Inc(u => u.CarsViewed, 1);
+                _users.UpdateOne(u => u.Email == email, update);
+
+                if (CurrentUser?.Email == email)
+                {
+                    CurrentUser.CarsViewed++;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error incrementing cars viewed: {ex.Message}");
+            }
+        }
+
+        public void IncrementInquiriesMade(string email)
+        {
+            try
+            {
+                var update = Builders<User>.Update.Inc(u => u.InquiriesMade, 1);
+                _users.UpdateOne(u => u.Email == email, update);
+
+                if (CurrentUser?.Email == email)
+                {
+                    CurrentUser.InquiriesMade++;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error incrementing inquiries made: {ex.Message}");
+            }
+        }
+
+        //public void IncrementCarsAdded(string email)
+        //{
+        //    try
+        //    {
+        //        var update = Builders<User>.Update.Inc(u => u.CarsAdded, 1);
+        //        _users.UpdateOne(u => u.Email == email, update);
+
+        //        if (CurrentUser?.Email == email)
+        //        {
+        //            CurrentUser.CarsAdded++;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine($"Error incrementing cars added: {ex.Message}");
+        //    }
+        //}
+
+        public bool UpdateProfilePicture(string email, byte[] profilePicture)
+        {
+            try
+            {
+                var update = Builders<User>.Update.Set(u => u.ProfilePicture, profilePicture);
+                var result = _users.UpdateOne(u => u.Email == email, update);
+
+                if (CurrentUser?.Email == email)
+                {
+                    CurrentUser.ProfilePicture = profilePicture;
+                }
+
+                return result.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error updating profile picture: {ex.Message}");
+                return false;
+            }
+        }
+
+        public User GetUserById(string id)
+        {
+            try
+            {
+                if (!ObjectId.TryParse(id, out ObjectId objectId))
+                {
+                    Debug.WriteLine($"Invalid ObjectId format: {id}");
+                    return null;
+                }
+                return _users.Find(u => u.Id == objectId).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"MongoDB error in GetUserById: {ex.Message}");
+                return null;
+            }
         }
     }
 }

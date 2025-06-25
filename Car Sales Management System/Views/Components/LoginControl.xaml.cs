@@ -38,6 +38,7 @@ namespace Car_Sales_Management_System.Views.Components
                 var user = _userService.CurrentUser;
                 StatusTextBlock.Foreground = Brushes.Green;
                 StatusTextBlock.Text = $"Login successful! Welcome {user.Role}";
+                //MessageBox.Show($"Current User: {user.Fullname}, Role: {user.Role}, IsAdmin: {_userService.IsAdmin}");
 
                 // Clear fields after successful login
                 EmailTextBox.Text = "";

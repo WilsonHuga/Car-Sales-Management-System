@@ -7,11 +7,10 @@ using System.Windows.Input;
 
 using Car_Sales_Management_System.DataModels;
 using Car_Sales_Management_System.Views;
-using Car_Sales_Management_System.Views.Components; // Adjust namespace as needed
+using Car_Sales_Management_System.Views.Components;
 
 namespace Car_Sales_Management_System
 {
-
     // Simple RelayCommand<T> implementation for command binding
     public class RelayCommand<T> : ICommand
     {
@@ -77,6 +76,7 @@ namespace Car_Sales_Management_System
             CarFilterControl.FilterChanged += ApplyFilters;
 
             this.Loaded += MainWindow_Loaded;
+            //_carService.InitializePhotosForAllCars();
             //LoadCars();
         }
 
@@ -119,6 +119,8 @@ namespace Car_Sales_Management_System
                 List<Car> cars = _carService?.GetAllCars() ?? new List<Car>();
 
                 _allCars = cars; // Save for filtering
+                //_allCars = cars.Select(c => { c.Photos ??= new List<string>(); return c; }).ToList();
+               
 
                 Cars.Clear();
                 foreach (var car in cars)
@@ -212,21 +214,48 @@ namespace Car_Sales_Management_System
                 return;
             }
 
-            MessageBox.Show($"Viewing request for {car.Make} {car.Model} submitted by {_userService.CurrentUser.Fullname}!",
-                "Viewing Request", MessageBoxButton.OK, MessageBoxImage.Information);
+            try
+            {
+                // Increment the CarsViewed counter for the current user
+                _userService.IncrementCarsViewed(_userService.CurrentUser.Email);
+
+                MessageBox.Show($"Viewing request for {car.Make} {car.Model} submitted by {_userService.CurrentUser.Fullname}! Cars Viewed: {_userService.CurrentUser.CarsViewed}",
+                    "Viewing Request", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error processing viewing request: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void GeneralEnquiry(Car car)
         {
-            if (!_userService.IsLoggedIn)
-            {
+            if(!_userService.IsLoggedIn)
+    {
                 MessageBox.Show("Please log in to make an enquiry.", "Login Required", MessageBoxButton.OK, MessageBoxImage.Information);
                 ShowLoginSignup();
                 return;
             }
-
-            MessageBox.Show($"General enquiry for {car.Make} {car.Model} submitted by {_userService.CurrentUser.Fullname}!",
-                "General Enquiry", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (car == null)
+            {
+                MessageBox.Show("No car selected for inquiry.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            try
+            {
+                var inquiryWindow = new InquiryWindow(car, _userService.CurrentUser);
+                inquiryWindow.Owner = this;
+                var result = inquiryWindow.ShowDialog();
+                if (result == true)
+                {
+                    MessageBox.Show($"Inquiry for {car.Make} {car.Model} submitted successfully by {_userService.CurrentUser.Fullname}!",
+                        "Inquiry Submitted", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening inquiry window: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void AddCarButton_Click(object sender, RoutedEventArgs e)
@@ -248,10 +277,166 @@ namespace Car_Sales_Management_System
 
         }
 
+        private void EditCarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_userService.IsAdmin)
+            {
+                MessageBox.Show("Only administrators can edit cars.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (CarGrid.SelectedItem is Car selectedCar)
+            {
+                try
+                {
+                    // Open the EditCarWindow, passing the selected car and CarService
+                    var editCarWindow = new EditCarWindow(selectedCar, _carService);
+                    editCarWindow.Owner = this; // Set owner to center modal properly
+                    var result = editCarWindow.ShowDialog();
+
+                    // If the edit was successful (dialog result is true), refresh the car list
+                    if (result == true)
+                    {
+                        LoadCars(); // Refresh the car list to reflect changes
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening edit window: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a car to edit.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+
+        }
+
+        private void DeleteCarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_userService.IsAdmin)
+            {
+                MessageBox.Show("Only administrators can delete cars.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (CarGrid.SelectedItem is Car selectedCar)
+            {
+                var result = MessageBox.Show($"Are you sure you want to delete {selectedCar.Make} {selectedCar.Model}?",
+                    "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    bool deleted = _carService.DeleteCar(selectedCar.Id.ToString());
+                    if (deleted)
+                    {
+                        LoadCars();
+                        MessageBox.Show("Car deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to delete car.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a car to delete.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             LoadCars();
+        }
+
+        private void ManageUsersButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_userService.IsAdmin)
+            {
+                MessageBox.Show("Only administrators can manage users.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                var manageUsersWindow = new ManageUsersWindow(_userService);
+                manageUsersWindow.Owner = this;
+                manageUsersWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error opening user management: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ManageInquiriesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_userService.IsAdmin)
+            {
+                MessageBox.Show("Only administrators can manage inquiries.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            try
+            {
+                var manageInquiriesWindow = new ManageInquiriesWindow(_userService);
+                manageInquiriesWindow.Owner = this;
+                manageInquiriesWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error opening inquiry management: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ReportsButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!_userService.IsAdmin)
+                {
+                    MessageBox.Show("Only administrators can view reports.", "Access Denied",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Get all cars from the service
+                var cars = _carService?.GetAllCars() ?? new System.Collections.Generic.List<Car>();
+
+                // Calculate basic statistics
+                int totalCars = cars.Count;
+                int availableCars = cars.Count(c => c.Status.Equals("Available", StringComparison.OrdinalIgnoreCase));
+                int reservedCars = cars.Count(c => c.Status.Equals("Reserved", StringComparison.OrdinalIgnoreCase));
+                int soldCars = cars.Count(c => c.Status.Equals("Sold", StringComparison.OrdinalIgnoreCase));
+                int newCars = cars.Count(c => c.Condition.Equals("New", StringComparison.OrdinalIgnoreCase));
+                int usedCars = cars.Count(c => c.Condition.Equals("Used", StringComparison.OrdinalIgnoreCase));
+
+                // Calculate average price (handle empty list to avoid division by zero)
+                double averagePrice = totalCars > 0 ? cars.Average(c => c.Price) : 0;
+
+                // Find oldest and newest listing dates
+                string oldestListing = cars.Any() ? cars.Min(c => c.ListedDate).ToString("d MMM yyyy") : "N/A";
+                string newestListing = cars.Any() ? cars.Max(c => c.ListedDate).ToString("d MMM yyyy") : "N/A";
+
+                // Build the report message
+                string report = "Car Inventory Report\n\n" +
+                    $"Total Cars: {totalCars}\n" +
+                    $"Available: {availableCars}\n" +
+                    $"Reserved: {reservedCars}\n" +
+                    $"Sold: {soldCars}\n" +
+                    $"New: {newCars}\n" +
+                    $"Used: {usedCars}\n" +
+                    $"Average Price: ${averagePrice:N2}\n" +
+                    $"Oldest Listing: {oldestListing}\n" +
+                    $"Newest Listing: {newestListing}";
+
+                // Display the report in a message box
+                MessageBox.Show(report, "Car Inventory Report", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error generating report: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Logout()
@@ -259,7 +444,6 @@ namespace Car_Sales_Management_System
             _userService.Logout();
             // The OnUserChanged event will handle showing the login screen
         }
-
 
         public void ShowMainMenu()
         {
@@ -295,25 +479,44 @@ namespace Car_Sales_Management_System
 
         private void UpdateUIForUserRole()
         {
+            if (_userService.IsLoggedIn)
+            {
+                RefreshButton.Visibility = Visibility.Visible;
+                ToggleViewButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                RefreshButton.Visibility = Visibility.Collapsed;
+                ToggleViewButton.Visibility = Visibility.Collapsed;
+            }
+
             if (_userService.IsAdmin)
             {
-                // Show admin-specific controls
-                // You can add admin-specific buttons/panels in XAML and control their visibility here
-                // Example: AdminPanel.Visibility = Visibility.Visible;
-                // Example: AddCarButton.Visibility = Visibility.Visible;
+                AddCarButton.Visibility = Visibility.Visible;
+                EditCarButton.Visibility = Visibility.Visible;
+                DeleteCarButton.Visibility = Visibility.Visible;
+                RefreshButton.Visibility = Visibility.Visible;
+                ToggleViewButton.Visibility = Visibility.Visible;
 
-                // For demonstration, we'll show a message
-                // You should replace this with actual UI updates
-                MessageBox.Show("Admin UI elements enabled");
+
+                ManageUsersButton.Visibility = Visibility.Visible;
+                ManageInquiriesButton.Visibility = Visibility.Visible;
+                ReportsButton.Visibility = Visibility.Visible;
+
+
             }
-            else if (_userService.IsUser)
+            else
             {
-                // Show user-specific controls and hide admin controls
-                // Example: AdminPanel.Visibility = Visibility.Collapsed;
-                // Example: AddCarButton.Visibility = Visibility.Collapsed;
+                AddCarButton.Visibility = Visibility.Collapsed;
+                EditCarButton.Visibility = Visibility.Collapsed;
+                DeleteCarButton.Visibility = Visibility.Collapsed;
 
-                // For demonstration
-                MessageBox.Show("User UI elements enabled");
+                RefreshButton.Visibility = Visibility.Visible;
+                ToggleViewButton.Visibility = Visibility.Visible;
+
+                ManageUsersButton.Visibility = Visibility.Collapsed;
+                ManageInquiriesButton.Visibility = Visibility.Collapsed;
+                ReportsButton.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -388,5 +591,4 @@ namespace Car_Sales_Management_System
             base.OnClosed(e);
         }
     }
-
 }
