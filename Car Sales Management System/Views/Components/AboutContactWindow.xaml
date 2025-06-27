@@ -1,12 +1,16 @@
-﻿<UserControl x:Class="Car_Sales_Management_System.Views.Components.AboutContactPage"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Car_Sales_Management_System.Views.Components"
-             mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="1200">
-    <UserControl.Resources>
+﻿<Window x:Class="Car_Sales_Management_System.Views.Components.AboutContactWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Car_Sales_Management_System.Views.Components"
+        mc:Ignorable="d"
+        Title="About AutoMart"
+        Width="1200"
+        Height="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize">
+    <Window.Resources>
         <!-- Section Title Style -->
         <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="24"/>
@@ -75,7 +79,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-    </UserControl.Resources>
+    </Window.Resources>
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -87,8 +91,7 @@
 
         <!-- Back Button -->
         <Button x:Name="BackButton" Grid.Row="0" Content="Back" Style="{StaticResource MainButtonStyle}" 
-                HorizontalAlignment="Left" Margin="0,0,0,20"/>
-        <!-- Click="BackButton_Click"-->
+                HorizontalAlignment="Left" Margin="0,0,0,12" Click="BackButton_Click"/>
 
         <!-- About Us Section -->
         <Border Grid.Row="1" Background="White" BorderBrush="#D3D3D3" BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,0,0,20">
@@ -138,4 +141,4 @@
             </StackPanel>
         </Border>
     </Grid>
-</UserControl>
+</Window> 
