@@ -232,5 +232,10 @@ namespace Car_Sales_Management_System.Views.Components
             var mainWindow = Window.GetWindow(this) as MainWindow;
             mainWindow?.LoadCars();
         }
+        //private void AboutUs_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var mainWindow = Window.GetWindow(this) as MainWindow;
+        //    mainWindow?.NavigateToAboutContact();
+        //}
     }
 }

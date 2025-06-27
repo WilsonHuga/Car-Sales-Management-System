@@ -1,0 +1,141 @@
+﻿<UserControl x:Class="Car_Sales_Management_System.Views.Components.AboutContactPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Car_Sales_Management_System.Views.Components"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <!-- Section Title Style -->
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#000046"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <!-- Paragraph Style -->
+        <Style x:Key="ParagraphStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <!-- Contact Label Style -->
+        <Style x:Key="ContactLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#000046"/>
+            <Setter Property="Margin" Value="0,0,10,5"/>
+        </Style>
+
+        <!-- Contact Info Style -->
+        <Style x:Key="ContactInfoStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <!-- Main Button Style (Copied from MainWindow.xaml for consistency) -->
+        <Style x:Key="MainButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#000046"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1E1E6A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#000032"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Back Button -->
+        <Button x:Name="BackButton" Grid.Row="0" Content="Back" Style="{StaticResource MainButtonStyle}" 
+                HorizontalAlignment="Left" Margin="0,0,0,20"/>
+        <!-- Click="BackButton_Click"-->
+
+        <!-- About Us Section -->
+        <Border Grid.Row="1" Background="White" BorderBrush="#D3D3D3" BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,0,0,20">
+            <StackPanel>
+                <TextBlock Text="About Us" Style="{StaticResource SectionTitleStyle}"/>
+                <TextBlock Style="{StaticResource ParagraphStyle}">
+                    Welcome to AutoMart, your trusted partner in finding the perfect vehicle. At AutoMart, we pride ourselves on offering a wide selection of high-quality new and used cars, tailored to meet the needs of every customer. Our mission is to provide a seamless and transparent car-buying experience, backed by exceptional customer service and competitive pricing.
+                </TextBlock>
+                <TextBlock Style="{StaticResource ParagraphStyle}">
+                    Founded in 2010, AutoMart has grown to become a leading car dealership in the region, known for our commitment to quality, reliability, and customer satisfaction. Whether you're looking for a sleek sedan, a robust SUV, or a fuel-efficient hybrid, our dedicated team is here to help you every step of the way.
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- Contact Section -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#D3D3D3" BorderThickness="1" CornerRadius="8" Padding="20">
+            <StackPanel>
+                <TextBlock Text="Contact Us" Style="{StaticResource SectionTitleStyle}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Address:" Style="{StaticResource ContactLabelStyle}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="123 AutoMart Lane, Car City, CA 90210" Style="{StaticResource ContactInfoStyle}"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Phone:" Style="{StaticResource ContactLabelStyle}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="(123) 456-7890" Style="{StaticResource ContactInfoStyle}"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Email:" Style="{StaticResource ContactLabelStyle}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="support@automart.com" Style="{StaticResource ContactInfoStyle}"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Business Hours:" Style="{StaticResource ContactLabelStyle}"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource ContactInfoStyle}">
+                        Monday - Friday: 9:00 AM - 6:00 PM<LineBreak/>
+                        Saturday: 10:00 AM - 4:00 PM<LineBreak/>
+                        Sunday: Closed
+                    </TextBlock>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
